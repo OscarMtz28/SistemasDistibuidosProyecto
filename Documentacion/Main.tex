@@ -29,16 +29,17 @@
 \geometry{letterpaper, margin=2.5cm}
 \setlength{\parskip}{1em}
 \setlength{\parindent}{0pt}
-\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\section}{\centering\large\bfseries}{}{0em}{}
+\titleformat{\subsection}{\centering\normalsize\bfseries}{}{0em}{}
+\titleformat{\subsubsection}{\centering\small\bfseries}{}{0em}{}
 
 % Configuración de hipervínculos
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
     urlcolor=blue,
-    pdftitle={Tienda Online de Productos Electrónicos},
-    pdfauthor={Aaron Rodrigo Ramos Reyes}
+    pdftitle={Mini Plataforma de Video Streaming P2P con Microservicios},
+    pdfauthor={Aaron Rodrigo Ramos Reyes, Oscar Martinez Barrales, Oswaldo Mejia Garcia}
 }
 
 \begin{document}
@@ -47,16 +48,31 @@
 \input{Capitulos/portada.tex}
 
 % Índice
-\tableofcontents
+
 \newpage
 
 % Sección de introducción
-\section{Introducción}  
+\section*{Introducción}  
 \input{Capitulos/Introduccion.tex}
 
+% Arquitectura del Sistema
+\section*{Arquitectura del Sistema}
+\input{Capitulos/Arquitectura.tex}
 
+% Implementación
+\section*{Implementación}
+\input{Capitulos/Implementacion.tex}
 
+% Tecnologías Utilizadas
+\section*{Tecnologías Utilizadas}
+\input{Capitulos/Tecnologias.tex}
 
+% Calendario de Actividades
+\section*{Calendario de Actividades}
+\input{Capitulos/Calendario.tex}
 
+% Conclusiones
+\section*{Conclusiones}
+\input{Capitulos/Conclusiones.tex}
 
 \end{document}
