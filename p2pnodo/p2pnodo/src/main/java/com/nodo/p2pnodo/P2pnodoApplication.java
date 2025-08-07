@@ -10,13 +10,13 @@ import org.springframework.web.client.RestTemplate;
 import com.nodo.p2pnodo.dto.NodeRegistration;
 
 import jakarta.annotation.PostConstruct;
-
 @SpringBootApplication
 public class P2pnodoApplication {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String CENTRAL_SERVICE_URL = "http://central-service:8080";
-    private final String NODE_URL = "http://" + System.getenv("HOSTNAME") + ":8080"; // Ajusta el puerto
+    private final String CENTRAL_SERVICE_URL = System.getenv("CENTRAL_SERVICE_URL");
+    private final String NODE_PORT = System.getenv("SERVER_PORT");
+    private final String NODE_URL = "http://" + System.getenv("HOSTNAME") + ":" + NODE_PORT;
 
     public static void main(String[] args) {
         SpringApplication.run(P2pnodoApplication.class, args);
@@ -30,14 +30,14 @@ public class P2pnodoApplication {
     @PostConstruct
     public void registerOnStartup() {
         NodeRegistration registration = new NodeRegistration();
-        registration.setNodeId(System.getenv("HOSTNAME")); // O UUID.randomUUID().toString()
+        registration.setNodeId(System.getenv("HOSTNAME"));
         registration.setNodeUrl(NODE_URL);
-        registration.setFragments(List.of()); // Lista vacía inicial
-        
+        registration.setFragments(List.of());
+
         try {
             restTemplate.postForObject(
-                CENTRAL_SERVICE_URL + "/api/register", 
-                registration, 
+                CENTRAL_SERVICE_URL + "/api/register",
+                registration,
                 String.class
             );
             System.out.println("✅ Nodo registrado en el servicio central");

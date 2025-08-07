@@ -15,8 +15,14 @@ services:
       - "8080:8080"
     environment:
       - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - p2p-network
 
@@ -27,15 +33,15 @@ services:
       - SERVER_PORT=8081
       - SPRING_DATA_REDIS_HOST=redis
       - CENTRAL_SERVICE_URL=http://centralservice:8080
-    ports:
-      - "8080"
+    #ports:
+      #- "8081:8080"  # Expone el nodo en el puerto 8081 del host
     depends_on:
-      - redis
-      - centralservice
+      centralservice:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - p2p-network
-
-
 
 networks:
   p2p-network:
