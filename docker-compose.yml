@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+
+  central-service:
+    build:
+      context: ./centralservice
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - central_logs:/var/log
+      - video_fragments:/app/video_fragments
+
+  p2p-node1:
+    build:
+      context: ./p2pnodo
+      args:
+        SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8081
+    depends_on:
+      - redis
+      - central-service
+    volumes:
+      - node1_logs:/var/log
+      - node1_fragments:/app/fragments
+
+  p2p-node2:
+    build:
+      context: ./p2pnodo
+      args:
+        SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8082
+    depends_on:
+      - redis
+      - central-service
+    volumes:
+      - node2_logs:/var/log
+      - node2_fragments:/app/fragments
+
+volumes:
+  redis_data:
+  central_logs:
+  node1_logs:
+  node2_logs:
+  video_fragments:
+  node1_fragments:
+  node2_fragments:

@@ -19,6 +19,7 @@ public class RedisSubscriber implements MessageListener {
     private final FragmentService fragmentService;
     private final ObjectMapper objectMapper;
 
+    @Override
   public void onMessage(Message message, byte[] pattern) {
     try {
         String json = new String(message.getBody());

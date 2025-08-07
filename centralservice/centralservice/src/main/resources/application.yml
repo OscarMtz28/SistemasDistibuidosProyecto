@@ -1,12 +1,29 @@
 server:
   port: 8080
+  servlet:
+    context-path: /
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  config:
+    activate:
+      on-profile: prod
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
+logging:
+  level:
+    root: INFO
+    com.p2pStream: DEBUG
+  file:
+    name: /var/log/central-service.log
+
+# Opcional: Configuración de fragmentos
+fragment:
+  storage:
+    path: /app/video_fragments

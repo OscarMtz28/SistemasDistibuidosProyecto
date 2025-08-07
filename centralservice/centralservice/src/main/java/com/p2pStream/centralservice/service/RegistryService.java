@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import com.p2pStream.centralservice.dto.FragmentEvent;
 import com.p2pStream.centralservice.dto.NodeRegistration;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RegistryService {
 
@@ -46,6 +49,21 @@ public class RegistryService {
             redisTemplate.convertAndSend("fragment-available", event);
         }
     }
+
+    public void publishFragment(FragmentEvent event) {
+    // Asegurar que el evento tenga timestamp
+    if (event.getTimestamp() == null) {
+        event.setTimestamp(System.currentTimeMillis());
+    }
+    
+    // Publicar en Redis
+    redisTemplate.convertAndSend("fragment-available", event);
+    
+    // Registrar en el fragmentMap (opcional)
+    fragmentMap.put(event.getFragmentId(), event.getNodeUrl());
+    
+    log.info("Fragmento {} publicado desde {}", event.getFragmentId(), event.getNodeUrl());
+       }
 
     public Map<String, Map<String, Object>> getAllNodes() {
         return Collections.unmodifiableMap(nodeRegistry);
