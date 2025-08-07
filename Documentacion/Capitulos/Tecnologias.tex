@@ -1,0 +1,70 @@
+\subsection*{Backend}
+
+\subsubsection*{Java}
+Lenguaje de programación principal del proyecto, aprovechando las características más recientes como:
+\begin{itemize}
+    \item Records para DTOs inmutables
+    \item Mejor rendimiento y gestión de memoria
+\end{itemize}
+
+\subsubsection*{Spring Boot}
+Framework principal para el desarrollo de microservicios:
+\begin{itemize}
+    \item \textbf{Spring Web} - APIs REST
+    \item \textbf{Spring Data Redis} - Integración con Redis
+    \item \textbf{Spring Boot Actuator} - Monitoreo y métricas
+\end{itemize}
+
+\subsubsection*{Maven}
+Herramienta de gestión de dependencias y construcción:
+\begin{itemize}
+    \item Gestión automática de dependencias
+    \item Perfiles de construcción para diferentes entornos
+    \item Plugins para empaquetado Docker
+\end{itemize}
+
+\subsection*{Base de Datos y Mensajería}
+
+\subsubsection*{Redis}
+Sistema de almacenamiento en memoria que proporciona:
+\begin{itemize}
+    \item \textbf{Pub/Sub} - Sistema de mensajería para notificaciones
+    \item \textbf{Cache} - Almacenamiento rápido de metadatos
+    \item \textbf{Persistencia} - Respaldo de datos críticos
+\end{itemize}
+
+\subsection*{Herramientas de Desarrollo}
+
+
+\subsubsection*{Swagger}
+Documentación automática de APIs:
+\begin{itemize}
+    \item Generación automática de documentación
+    \item Interfaz web interactiva para pruebas
+\end{itemize}
+
+\subsubsection*{Jackson}
+Serialización/deserialización JSON:
+\begin{itemize}
+    \item Conversión automática de objetos Java a JSON
+    \item Configuración flexible de mapeo
+    \item Soporte para tipos complejos
+\end{itemize}
+
+\subsection*{Containerización y Orquestación}
+
+\subsubsection*{Docker}
+Containerización de aplicaciones:
+\begin{itemize}
+    \item Imágenes ligeras basadas en OpenJDK
+    \item Configuración mediante variables de entorno
+    \item Aislamiento de dependencias
+\end{itemize}
+
+\subsubsection*{Docker Compose}
+Orquestación de múltiples servicios:
+\begin{itemize}
+    \item Definición declarativa de servicios
+    \item Escalado horizontal automático
+    \item Gestión de redes y volúmenes
+\end{itemize}
