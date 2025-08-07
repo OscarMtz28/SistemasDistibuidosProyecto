@@ -1,33 +1,44 @@
 package com.nodo.p2pnodo.model;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FragmentInfo {
-
     private String fragmentId;
-    private String nodeUrl;
+    private String nodeUrl;  // Using URL instead of ID for direct node access
+    private Long timestamp = Instant.now().toEpochMilli();  // Auto-initialized timestamp
 
-    // Opcional: puedes agregar timestamp o nodo que originó el mensaje
-    private Long timestamp; // epoch millis
-
-    // Validación básica útil para logs/debug
+  
     public boolean isValid() {
         return fragmentId != null && !fragmentId.isBlank()
-            && nodeUrl != null && !nodeUrl.isBlank();
+                && nodeUrl != null && !nodeUrl.isBlank();
     }
 
+   
+    public static FragmentInfo of(String fragmentId, String nodeUrl) {
+        return new FragmentInfo(fragmentId, nodeUrl, Instant.now().toEpochMilli());
+    }
+
+    
     @Override
     public String toString() {
-        return "FragmentInfo{" +
-                "fragmentId='" + fragmentId + '\'' +
-                ", nodeUrl='" + nodeUrl + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        return String.format(
+            "FragmentInfo{fragmentId='%s', nodeUrl='%s', timestamp=%d (ISO: %s)}",
+            fragmentId,
+            nodeUrl,
+            timestamp,
+            Instant.ofEpochMilli(timestamp).toString()
+        );
+    }
+
+    
+    public boolean isOlderThan(long maxAgeMs) {
+        return (Instant.now().toEpochMilli() - timestamp) > maxAgeMs;
     }
 }
