@@ -2,14 +2,11 @@ version: '3.8'
 
 services:
   redis:
-    image: redis:7.2-alpine
+    image: redis:alpine
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+    networks:
+      - p2p-network
 
   central-service:
     build:
@@ -17,53 +14,42 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATA_REDIS_HOST=redis
     depends_on:
-      redis:
-        condition: service_healthy
-    volumes:
-      - central_logs:/var/log
-      - video_fragments:/app/video_fragments
+      - redis
+    networks:
+      - p2p-network
 
-  p2p-node1:
+  p2p-node-1:
     build:
       context: ./p2pnodo
-      args:
-        SERVER_PORT: 8081
+    environment:
+      - SERVER_PORT=8081
+      - SPRING_DATA_REDIS_HOST=redis
+      - CENTRAL_SERVICE_URL=http://central-service:8080
     ports:
       - "8081:8081"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SERVER_PORT=8081
     depends_on:
       - redis
       - central-service
-    volumes:
-      - node1_logs:/var/log
-      - node1_fragments:/app/fragments
+    networks:
+      - p2p-network
 
-  p2p-node2:
+  p2p-node-2:
     build:
       context: ./p2pnodo
-      args:
-        SERVER_PORT: 8082
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATA_REDIS_HOST=redis
+      - CENTRAL_SERVICE_URL=http://central-service:8080
     ports:
       - "8082:8082"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SERVER_PORT=8082
     depends_on:
       - redis
       - central-service
-    volumes:
-      - node2_logs:/var/log
-      - node2_fragments:/app/fragments
+    networks:
+      - p2p-network
 
-volumes:
-  redis_data:
-  central_logs:
-  node1_logs:
-  node2_logs:
-  video_fragments:
-  node1_fragments:
-  node2_fragments:
+networks:
+  p2p-network:
+    driver: bridge

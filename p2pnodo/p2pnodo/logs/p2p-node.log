@@ -1,0 +1,8 @@
+2025-08-07T06:06:52.883-06:00  INFO 35152 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : Starting P2pnodoApplicationTests using Java 21.0.8 with PID 35152 (started by Aaron in C:\Users\Aaron\Desktop\SistemasDistibuidosProyecto\p2pnodo\p2pnodo)
+2025-08-07T06:06:52.885-06:00 DEBUG 35152 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-07T06:06:52.886-06:00  INFO 35152 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : The following 1 profile is active: "test"
+2025-08-07T06:06:53.283-06:00  INFO 35152 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : Started P2pnodoApplicationTests in 0.67 seconds (process running for 1.277)
+2025-08-07T06:08:14.979-06:00  INFO 36892 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : Starting P2pnodoApplicationTests using Java 21.0.8 with PID 36892 (started by Aaron in C:\Users\Aaron\Desktop\SistemasDistibuidosProyecto\p2pnodo\p2pnodo)
+2025-08-07T06:08:14.981-06:00 DEBUG 36892 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-07T06:08:14.981-06:00  INFO 36892 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : The following 1 profile is active: "test"
+2025-08-07T06:08:15.355-06:00  INFO 36892 --- [p2pnodo] [main] c.nodo.p2pnodo.P2pnodoApplicationTests   : Started P2pnodoApplicationTests in 0.688 seconds (process running for 1.35)
