@@ -1,0 +1,58 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor<<Central>> #FFEECC
+  BackgroundColor<<Nodo>> #CCE5FF
+  BackgroundColor<<Redis>> #FFD9E6
+  BorderColor Black
+}
+
+title Mini Plataforma de Video Streaming P2P con Microservicios
+
+rectangle "Servicio Central\n(Registry Service)" <<Central>> as Central {
+  [API REST /registerNode] as register
+  [API REST /updateFragments] as update
+  [API REST /whoHas/{fragmentId}] as whoHas
+}
+
+rectangle "Nodo 1" <<Nodo>> as Nodo1 {
+  [GET /fragment/{id}] as getF1
+  [POST /receiveFragment] as recvF1
+}
+
+rectangle "Nodo 2" <<Nodo>> as Nodo2 {
+  [GET /fragment/{id}] as getF2
+  [POST /receiveFragment] as recvF2
+}
+
+rectangle "Nodo 3" <<Nodo>> as Nodo3 {
+  [GET /fragment/{id}] as getF3
+  [POST /receiveFragment] as recvF3
+}
+
+rectangle "Redis Pub/Sub" <<Redis>> as Redis {
+  [Canal: video.fragments]
+}
+
+Central -[hidden]-> Redis
+Nodo1 -[hidden]-> Redis
+Nodo2 -[hidden]-> Redis
+Nodo3 -[hidden]-> Redis
+
+Central --> Redis : Publica/Recibe eventos de fragmentos
+Nodo1 --> Redis : Publica "tengo fragmento X"
+Nodo2 --> Redis : Publica "tengo fragmento Y"
+Nodo3 --> Redis : Publica "tengo fragmento Z"
+
+Nodo1 --> Central : Registrar y actualizar fragmentos
+Nodo2 --> Central : Registrar y actualizar fragmentos
+Nodo3 --> Central : Registrar y actualizar fragmentos
+
+Nodo1 --> Nodo2 : Solicitar fragmento vía HTTP/ZeroMQ
+Nodo2 --> Nodo1 : Enviar fragmento
+Nodo2 --> Nodo3 : Solicitar fragmento
+Nodo3 --> Nodo2 : Enviar fragmento
+Nodo1 --> Nodo3 : Solicitar fragmento
+Nodo3 --> Nodo1 : Enviar fragmento
+
+@enduml

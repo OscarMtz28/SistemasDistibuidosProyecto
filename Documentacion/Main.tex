@@ -1,0 +1,62 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{framed}
+
+% Configuración esencial para listings la vaina que permite mostrar código 
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    language=SQL,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    captionpos=b
+}
+
+% Configuración de página
+\geometry{letterpaper, margin=2.5cm}
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0pt}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% Configuración de hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdftitle={Tienda Online de Productos Electrónicos},
+    pdfauthor={Aaron Rodrigo Ramos Reyes}
+}
+
+\begin{document}
+
+% Portada
+\input{Capitulos/portada.tex}
+
+% Índice
+\tableofcontents
+\newpage
+
+% Sección de introducción
+\section{Introducción}  
+\input{Capitulos/Introduccion.tex}
+
+
+
+
+
+
+\end{document}
