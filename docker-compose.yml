@@ -8,9 +8,9 @@ services:
     networks:
       - p2p-network
 
-  central-service:
+  centralservice:
     build:
-      context: ./centralservice
+      context: ./centralservice/centralservice
     ports:
       - "8080:8080"
     environment:
@@ -20,35 +20,22 @@ services:
     networks:
       - p2p-network
 
-  p2p-node-1:
+  p2pnodo:
     build:
-      context: ./p2pnodo
+      context: ./p2pnodo/p2pnodo
     environment:
       - SERVER_PORT=8081
       - SPRING_DATA_REDIS_HOST=redis
-      - CENTRAL_SERVICE_URL=http://central-service:8080
+      - CENTRAL_SERVICE_URL=http://centralservice:8080
     ports:
-      - "8081:8081"
+      - "8080"
     depends_on:
       - redis
-      - central-service
+      - centralservice
     networks:
       - p2p-network
 
-  p2p-node-2:
-    build:
-      context: ./p2pnodo
-    environment:
-      - SERVER_PORT=8082
-      - SPRING_DATA_REDIS_HOST=redis
-      - CENTRAL_SERVICE_URL=http://central-service:8080
-    ports:
-      - "8082:8082"
-    depends_on:
-      - redis
-      - central-service
-    networks:
-      - p2p-network
+
 
 networks:
   p2p-network:
