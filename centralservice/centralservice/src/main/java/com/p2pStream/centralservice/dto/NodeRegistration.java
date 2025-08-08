@@ -7,6 +7,8 @@ public class NodeRegistration {
     private String nodeUrl;
     private List<String> fragments;
 
+    
+
     // Getters y Setters
     public String getNodeId() {
         return nodeId;

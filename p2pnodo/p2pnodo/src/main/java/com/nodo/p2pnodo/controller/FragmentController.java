@@ -1,6 +1,8 @@
 package com.nodo.p2pnodo.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -74,4 +76,26 @@ public class FragmentController {
                 .body("Error al guardar el fragmento: " + e.getMessage());
         }
     }
+    @PostMapping("/upload-local")
+public ResponseEntity<String> uploadLocalFile(@RequestParam String filename) {
+    try {
+        File file = new File("/app/mis_archivos_nodo/" + filename);
+        if (!file.exists()) {
+            return ResponseEntity.badRequest().body("Archivo no encontrado: " + filename);
+        }
+
+        byte[] data = Files.readAllBytes(file.toPath());
+        fragmentService.saveFragment(filename, data);
+
+        log.info("Archivo local '{}' cargado en fragmentos", filename);
+        return ResponseEntity.ok("Archivo " + filename + " cargado en el nodo.");
+    } catch (IOException e) {
+        log.error("Error al cargar archivo local '{}': {}", filename, e.getMessage());
+        return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+    }
+}
+
+
+
+
 }

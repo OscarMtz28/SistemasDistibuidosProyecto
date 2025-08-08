@@ -10,6 +10,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+        public static final String FRAGMENT_CHANNEL = "fragmentChannel";
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -34,4 +35,7 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
+
+
+    
 }
