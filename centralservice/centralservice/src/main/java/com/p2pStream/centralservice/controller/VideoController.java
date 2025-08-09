@@ -1,11 +1,19 @@
 package com.p2pStream.centralservice.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,6 +100,39 @@ public class VideoController {
                 log.error("Error distribuyendo fragmento {}", fragment, e);
             }
         });
+    }
+
+    @GetMapping("/fragment/{fragmentId}")
+    public ResponseEntity<byte[]> getFragment(@PathVariable String fragmentId) {
+        try {
+            File fragmentFile = new File(fragmentsDir.toFile(), fragmentId);
+            
+            if (!fragmentFile.exists()) {
+                log.warn("Fragmento no encontrado: {}", fragmentId);
+                return ResponseEntity.notFound().build();
+            }
+
+            byte[] data = Files.readAllBytes(fragmentFile.toPath());
+            
+            HttpHeaders headers = new HttpHeaders();
+            if (fragmentId.toLowerCase().endsWith(".mp4")) {
+                headers.setContentType(MediaType.valueOf("video/mp4"));
+            } else {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            }
+            
+            headers.setContentDisposition(
+                ContentDisposition.attachment()
+                    .filename(fragmentId)
+                    .build());
+
+            log.info("Sirviendo fragmento {} ({} bytes)", fragmentId, data.length);
+            return new ResponseEntity<>(data, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            log.error("Error al leer fragmento {}: {}", fragmentId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     private String selectOptimalNode() {

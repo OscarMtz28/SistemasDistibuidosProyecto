@@ -10,6 +10,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.nodo.p2pnodo.service.FragmentService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,25 +21,39 @@ import lombok.extern.slf4j.Slf4j;
 public class NodeClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final FragmentService fragmentService;
 
     public void downloadFragment(String nodeUrl, String fragmentId) {
+        // Verificar si ya tenemos el fragmento
+        if (fragmentService.hasFragment(fragmentId)) {
+            log.debug("Fragment {} already exists locally, skipping download", fragmentId);
+            return;
+        }
+
         String url = nodeUrl + "/fragment/" + fragmentId;
+        log.info("🔄 Attempting to download fragment {} from {}", fragmentId, url);
 
         try {
             ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
 
-            if (response.getStatusCode().is2xxSuccessful()) {
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 byte[] fragmentData = response.getBody();
                 log.info("📦 Fragment {} downloaded ({} bytes)", fragmentId, fragmentData.length);
 
-                // Enviarlo a mí mismo
-                uploadFragment("http://localhost:8080", fragmentId, fragmentData);
+                // Guardar directamente en el servicio local
+                try {
+                    fragmentService.saveFragment(fragmentId, fragmentData);
+                    log.info("✅ Fragment {} saved locally", fragmentId);
+                } catch (Exception e) {
+                    log.error("❌ Error saving fragment {} locally", fragmentId, e);
+                }
             } else {
-                log.warn("⚠️ Failed to download fragment {} from {}", fragmentId, nodeUrl);
+                log.warn("⚠️ Failed to download fragment {} from {} - Status: {}", 
+                    fragmentId, nodeUrl, response.getStatusCode());
             }
 
         } catch (Exception e) {
-            log.error("❌ Error downloading fragment {}", fragmentId, e);
+            log.error("❌ Error downloading fragment {} from {}: {}", fragmentId, nodeUrl, e.getMessage());
         }
     }
 

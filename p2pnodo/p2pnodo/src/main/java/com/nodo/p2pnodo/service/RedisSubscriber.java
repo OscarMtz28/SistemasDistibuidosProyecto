@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nodo.p2pnodo.client.NodeClient;
 import com.nodo.p2pnodo.config.RedisConfig;
-import com.nodo.p2pnodo.model.FragmentInfo;
+import com.nodo.p2pnodo.dto.FragmentEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +32,14 @@ public class RedisSubscriber implements MessageListener {
 
         try {
             String json = new String(message.getBody());
-            FragmentInfo info = objectMapper.readValue(json, FragmentInfo.class);
+            FragmentEvent event = objectMapper.readValue(json, FragmentEvent.class);
             
-            if (!info.isValid()) {
+            if (!event.isValid()) {
                 log.warn("Evento inválido recibido. Canal: {}, Contenido: {}", channel, json);
                 return;
             }
             
-            processFragment(info);
+            processFragment(event);
             
         } catch (Exception e) {
             log.error("Error procesando mensaje Redis. Canal: {}", channel, e);
@@ -47,17 +47,30 @@ public class RedisSubscriber implements MessageListener {
         }
     }
 
-    private void processFragment(FragmentInfo info) {
-        final String fragmentId = info.getFragmentId();
+    private void processFragment(FragmentEvent event) {
+        final String fragmentId = event.getFragmentId();
         
         if (fragmentService.hasFragment(fragmentId)) {
             log.debug("Fragmento {} ya existe localmente. Saltando descarga.", fragmentId);
             return;
         }
         
-        log.info("Iniciando descarga de fragmento {} desde {}", fragmentId, info.getNodeUrl());
+        log.info("Iniciando descarga de fragmento {} desde {}", fragmentId, event.getNodeUrl());
         try {
-            nodeClient.downloadFragment(info.getNodeUrl(), fragmentId);
+            // Primero intentar desde el servicio central
+            String centralServiceUrl = System.getenv("CENTRAL_SERVICE_URL");
+            if (centralServiceUrl != null) {
+                try {
+                    nodeClient.downloadFragment(centralServiceUrl + "/api/videos", fragmentId);
+                    log.info("Descarga completada para fragmento {} desde servicio central", fragmentId);
+                    return;
+                } catch (Exception e) {
+                    log.warn("Falló descarga desde servicio central para {}, intentando desde nodo P2P", fragmentId);
+                }
+            }
+            
+            // Si falla, intentar desde el nodo P2P especificado
+            nodeClient.downloadFragment(event.getNodeUrl(), fragmentId);
             log.info("Descarga completada para fragmento {}", fragmentId);
         } catch (Exception e) {
             log.error("Falló la descarga del fragmento {}", fragmentId, e);

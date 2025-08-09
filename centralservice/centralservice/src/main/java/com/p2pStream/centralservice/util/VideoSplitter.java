@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class VideoSplitter {
 
-    private static final int FRAGMENT_SIZE_KB = 1024; // 1MB por fragmento
+    private static final int FRAGMENT_SIZE_KB = 512; // 512KB por fragmento (más seguro)
     private static final String FRAGMENT_PREFIX = "video_part_";
 
     public List<String> splitVideo(File videoFile, String outputDir) throws IOException {

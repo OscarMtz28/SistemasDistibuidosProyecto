@@ -22,7 +22,9 @@ public class FragmentService {
 
     // Guarda un fragmento en la carpeta local
     public void saveFragment(String id, byte[] data) throws IOException {
-        File file = new File(fragmentFolder + id + ".bin");
+        // No agregar .bin si el ID ya tiene una extensión
+        String filename = id.contains(".") ? id : id + ".bin";
+        File file = new File(fragmentFolder + filename);
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(data);
         }
@@ -30,16 +32,24 @@ public class FragmentService {
 
     // Devuelve el fragmento como bytes
     public byte[] getFragment(String id) throws IOException {
-        File file = new File(fragmentFolder + id + ".bin");
+        // Intentar primero con el ID tal como viene
+        File file = new File(fragmentFolder + id);
         if (!file.exists()) {
-            throw new IOException("Fragmento no encontrado");
+            // Si no existe, intentar con .bin
+            file = new File(fragmentFolder + id + ".bin");
+        }
+        if (!file.exists()) {
+            throw new IOException("Fragmento no encontrado: " + id);
         }
         return Files.readAllBytes(file.toPath());
     }
 
     // Verifica si el fragmento ya existe localmente
     public boolean hasFragment(String id) {
-        File file = new File(fragmentFolder + id + ".bin");
+        File file = new File(fragmentFolder + id);
+        if (!file.exists()) {
+            file = new File(fragmentFolder + id + ".bin");
+        }
         return file.exists();
     }
 }

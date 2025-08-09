@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nodo.p2pnodo.service.FragmentService;
+import com.nodo.p2pnodo.service.RegistrationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FragmentController {
 
     private final FragmentService fragmentService;
+    private final RegistrationService registrationService;
 
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> getFragment(@PathVariable String id) {
@@ -40,13 +42,22 @@ public class FragmentController {
             }
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            
+            // Determinar el tipo de contenido basado en la extensión
+            if (id.toLowerCase().endsWith(".mp4")) {
+                headers.setContentType(MediaType.valueOf("video/mp4"));
+            } else {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            }
+            
+            // Usar el nombre original del archivo
+            String filename = id.contains(".") ? id : id + ".bin";
             headers.setContentDisposition(
                 ContentDisposition.attachment()
-                    .filename(id + ".bin")
+                    .filename(filename)
                     .build());
 
-            log.info("📤 Enviando fragmento {}", id);
+            log.info("📤 Enviando fragmento {} ({} bytes)", id, data.length);
             return new ResponseEntity<>(data, headers, HttpStatus.OK);
 
         } catch (IOException e) {
@@ -68,6 +79,10 @@ public class FragmentController {
 
             fragmentService.saveFragment(id, file.getBytes());
             log.info("✅ Fragmento '{}' recibido ({} bytes)", id, file.getSize());
+            
+            // Notificar al servicio central que tenemos este fragmento
+            registrationService.notifyFragmentAvailable(id);
+            
             return ResponseEntity.ok("Fragmento '" + id + "' recibido correctamente.");
 
         } catch (IOException e) {
@@ -86,6 +101,9 @@ public ResponseEntity<String> uploadLocalFile(@RequestParam String filename) {
 
         byte[] data = Files.readAllBytes(file.toPath());
         fragmentService.saveFragment(filename, data);
+        
+        // Notificar al servicio central que tenemos este fragmento
+        registrationService.notifyFragmentAvailable(filename);
 
         log.info("Archivo local '{}' cargado en fragmentos", filename);
         return ResponseEntity.ok("Archivo " + filename + " cargado en el nodo.");
