@@ -30,11 +30,12 @@ services:
     build:
       context: ./p2pnodo/p2pnodo
     environment:
-      - SERVER_PORT=8081
+      - SERVER_PORT=8080
+      - HOSTNAME=p2pnodo1
       - SPRING_DATA_REDIS_HOST=redis
       - CENTRAL_SERVICE_URL=http://centralservice:8080
     ports:
-      - "8081:8081"
+      - "8081:8080"
     depends_on:
       centralservice:
         condition: service_healthy
@@ -43,17 +44,18 @@ services:
     networks:
       - p2p-network
     volumes:
-      - /C:/Users/TuUsuario/Desktop/mis_archivos_nodo:/app/mis_archivos_nodo
+      - /C:/Users/Aaron/Desktop/fragments_nodo1:/app/fragments
 
   p2pnodo2:
     build:
       context: ./p2pnodo/p2pnodo
     environment:
-      - SERVER_PORT=8081
+      - SERVER_PORT=8080
+      - HOSTNAME=p2pnodo2
       - SPRING_DATA_REDIS_HOST=redis
       - CENTRAL_SERVICE_URL=http://centralservice:8080
     ports:
-      - "8082:8081"
+      - "8082:8080"
     depends_on:
       centralservice:
         condition: service_healthy
@@ -62,17 +64,18 @@ services:
     networks:
       - p2p-network
     volumes:
-      - /C:/Users/TuUsuario/Desktop/mis_archivos_nodo:/app/mis_archivos_nodo
+      - /C:/Users/Aaron/Desktop/fragments_nodo2:/app/fragments
 
   p2pnodo3:
     build:
       context: ./p2pnodo/p2pnodo
     environment:
-      - SERVER_PORT=8081
+      - SERVER_PORT=8080
+      - HOSTNAME=p2pnodo3
       - SPRING_DATA_REDIS_HOST=redis
       - CENTRAL_SERVICE_URL=http://centralservice:8080
     ports:
-      - "8083:8081"
+      - "8083:8080"
     depends_on:
       centralservice:
         condition: service_healthy
@@ -81,7 +84,7 @@ services:
     networks:
       - p2p-network
     volumes:
-      - /C:/Users/TuUsuario/Desktop/mis_archivos_nodo:/app/mis_archivos_nodo
+      - /C:/Users/Aaron/Desktop/fragments_nodo3:/app/fragments
 
 networks:
   p2p-network:

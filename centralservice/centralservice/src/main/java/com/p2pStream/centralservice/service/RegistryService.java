@@ -1,7 +1,9 @@
 package com.p2pStream.centralservice.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,11 +46,28 @@ public class RegistryService {
         }
     }
 
-    public void publishFragment(FragmentEvent event) {
-        event.setTimestamp(System.currentTimeMillis());
-        redisTemplate.convertAndSend(RedisConfig.FRAGMENT_CHANNEL, event);
-        fragmentMap.put(event.getFragmentId(), event.getNodeUrl());
-    }
+   public void publishFragment(FragmentEvent event) {
+    event.setTimestamp(System.currentTimeMillis());
+    redisTemplate.convertAndSend(RedisConfig.FRAGMENT_CHANNEL, event);
+    fragmentMap.put(event.getFragmentId(), event.getNodeUrl());
+
+    // Actualizar la lista de fragmentos en nodeRegistry
+    nodeRegistry.forEach((nodeId, nodeData) -> {
+        String url = (String) nodeData.get("url");
+        if (url.equals(event.getNodeUrl())) {
+            @SuppressWarnings("unchecked")
+            List<String> fragments = (List<String>) nodeData.get("fragments");
+            if (fragments == null) {
+                fragments = new ArrayList<>();
+                nodeData.put("fragments", fragments);
+            }
+            if (!fragments.contains(event.getFragmentId())) {
+                fragments.add(event.getFragmentId());
+            }
+        }
+    });
+}
+
 
     public Map<String, Map<String, Object>> getAllNodes() {
         return Collections.unmodifiableMap(nodeRegistry);

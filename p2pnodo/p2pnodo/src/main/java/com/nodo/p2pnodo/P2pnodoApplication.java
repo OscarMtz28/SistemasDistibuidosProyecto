@@ -10,13 +10,16 @@ import org.springframework.web.client.RestTemplate;
 import com.nodo.p2pnodo.dto.NodeRegistration;
 
 import jakarta.annotation.PostConstruct;
+
 @SpringBootApplication
 public class P2pnodoApplication {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String CENTRAL_SERVICE_URL = System.getenv("CENTRAL_SERVICE_URL");
-    private final String NODE_PORT = System.getenv("SERVER_PORT");
-    private final String NODE_URL = "http://" + System.getenv("HOSTNAME") + ":" + NODE_PORT;
+
+    private final String centralServiceUrl = System.getenv("CENTRAL_SERVICE_URL");
+    private final String serverPort = System.getenv("SERVER_PORT");
+    private final String hostName = System.getenv("HOSTNAME");
+    private final String nodeUrl = "http://" + hostName + ":" + serverPort;
 
     public static void main(String[] args) {
         SpringApplication.run(P2pnodoApplication.class, args);
@@ -30,17 +33,17 @@ public class P2pnodoApplication {
     @PostConstruct
     public void registerOnStartup() {
         NodeRegistration registration = new NodeRegistration();
-        registration.setNodeId(System.getenv("HOSTNAME"));
-        registration.setNodeUrl(NODE_URL);
+        registration.setNodeId(hostName);
+        registration.setNodeUrl(nodeUrl);
         registration.setFragments(List.of());
 
         try {
             restTemplate.postForObject(
-                CENTRAL_SERVICE_URL + "/api/register",
+                centralServiceUrl + "/api/register",
                 registration,
                 String.class
             );
-            System.out.println("✅ Nodo registrado en el servicio central");
+            System.out.println("✅ Nodo registrado en el servicio central con URL: " + nodeUrl);
         } catch (Exception e) {
             System.err.println("❌ Error registrando nodo: " + e.getMessage());
         }

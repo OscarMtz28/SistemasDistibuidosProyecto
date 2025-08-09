@@ -34,8 +34,5 @@ public class NodeRegistration {
         this.fragments = fragments;
     }
 
-    public boolean isValid() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isValid'");
-    }
+    
 }
