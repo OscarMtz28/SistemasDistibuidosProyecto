@@ -1,7 +1,3 @@
-# 📡 Guía de Consumo de APIs - Sistema P2P de Video Streaming con Postman
-
-Esta guía te ayudará a probar y consumir los servicios del sistema P2P de fragmentación y distribución de videos usando Postman.
-
 ## 🚀 Configuración Inicial
 
 ### Prerrequisitos
@@ -198,45 +194,6 @@ Content-Disposition: attachment; filename="video_part_0.bin"
    ... (continuar secuencialmente)
    ```
 
-### Caso 3: Balanceador de Carga para Video Popular
-
-**Escenario**: Mismo fragmento replicado en múltiples nodos para alta demanda
-
-1. **Subir mismo fragmento a múltiples nodos**
-   ```
-   POST http://localhost:8081/fragment/receive
-   - id: video_viral_intro
-   - file: intro_viral.mp4
-   
-   POST http://localhost:8082/fragment/receive  
-   - id: video_viral_intro
-   - file: intro_viral.mp4
-   ```
-
-2. **Verificar disponibilidad**
-   ```
-   GET http://localhost:8080/api/fragment/video_viral_intro
-   ```
-
-3. **Descargar desde diferentes nodos (balanceo automático)**
-   ```
-   GET http://localhost:8083/fragment/video_viral_intro
-   ```
-
-## 🔧 Colección de Postman
-
-### Crear Colección
-1. Abre Postman
-2. Crea una nueva colección llamada "Sistema P2P"
-3. Agrega las siguientes requests:
-
-#### Variables de Colección
-```
-central_service: http://localhost:8080
-node1: http://localhost:8081
-node2: http://localhost:8082
-node3: http://localhost:8083
-```
 
 #### Requests Sugeridos
 
@@ -248,31 +205,21 @@ node3: http://localhost:8083
 - Method: GET  
 - URL: `{{central_service}}/api/fragment/{{fragment_id}}`
 
-**3. Upload Complete Video for Auto-Fragmentation**
-- Method: POST
-- URL: `{{central_service}}/api/videos/upload`
-- Body: form-data
-- Key: `file` (complete video file)
 
-**4. Download Video Fragment from Node 1**
+
+**3. Download Video Fragment from Node 1**
 - Method: GET
 - URL: `{{node1}}/fragment/video_part_0`
 
-**5. Download Video Fragment from Node 2**
+**4. Download Video Fragment from Node 2**
 - Method: GET
 - URL: `{{node2}}/fragment/video_part_1`
 
-**6. Download Video Fragment from Node 3**
+**5. Download Video Fragment from Node 3**
 - Method: GET
 - URL: `{{node3}}/fragment/video_part_2`
 
-**7. Stream Complete Video Sequence**
-- Method: GET (secuencial)
-- URL: `{{node1}}/fragment/video_part_0`
-- URL: `{{node2}}/fragment/video_part_1`
-- URL: `{{node3}}/fragment/video_part_2`
-- URL: `{{node1}}/fragment/video_part_3`
-- ... (continuar hasta el último fragmento)
+
 
 ## ⚠️ Consideraciones Importantes
 
@@ -280,75 +227,10 @@ node3: http://localhost:8083
 - Los fragmentos de video se almacenan en memoria, se pierden al reiniciar los contenedores
 - No hay autenticación implementada
 - Los fragmentos se almacenan temporalmente en `/app/fragments`
-- No hay validación de formato de video
-- No hay compresión automática de fragmentos
 
 ### Troubleshooting
 - **Error de conexión**: Verifica que Docker Compose esté ejecutándose
 - **404 Fragment not found**: El fragmento no existe o no está registrado
 - **500 Internal Server Error**: Revisa los logs del contenedor correspondiente
 
-### Comandos útiles para debugging
-```bash
-# Ver logs del servicio central
-docker logs sistemasdistibuidosproyecto-centralservice-1
 
-# Ver logs de un nodo específico
-docker logs sistemasdistibuidosproyecto-p2pnodo1-1
-
-# Ver estado de contenedores
-docker ps
-```
-
-## 📊 Monitoreo del Sistema
-
-### Health Check
-Puedes verificar el estado del sistema consultando periódicamente:
-```
-GET http://localhost:8080/api/nodes
-```
-
-### Métricas Básicas
-- `lastSeen`: Timestamp de la última comunicación del nodo
-- `fragments`: Lista de fragmentos almacenados en cada nodo
-- `url`: URL interna del nodo para comunicación entre contenedores
-
-## 🎬 Casos de Uso del Sistema
-
-### Streaming de Video P2P
-- **Distribución de carga**: Los fragmentos se distribuyen entre nodos para balancear la carga
-- **Redundancia**: Fragmentos populares pueden replicarse en múltiples nodos
-- **Streaming adaptativo**: Los clientes pueden descargar fragmentos desde el nodo más cercano/rápido
-
-### Fragmentación Automática
-El sistema fragmenta automáticamente cualquier video en chunks de **1MB cada uno**:
-
-- **Videos cortos (5MB)**: ~5 fragmentos automáticos
-- **Episodios de series (50MB)**: ~50 fragmentos automáticos  
-- **Películas (500MB)**: ~500 fragmentos automáticos
-- **Videos 4K (2GB)**: ~2000 fragmentos automáticos
-
-**Ventajas**:
-- Fragmentación consistente independiente del contenido
-- Distribución equilibrada entre nodos
-- Streaming eficiente con chunks pequeños
-
-### Nomenclatura Automática de Fragmentos
-El sistema genera automáticamente nombres secuenciales:
-```
-video_part_0    (primer fragmento - 0-1MB)
-video_part_1    (segundo fragmento - 1-2MB)  
-video_part_2    (tercer fragmento - 2-3MB)
-video_part_N    (último fragmento)
-```
-
-**Ejemplo con video de 10MB**:
-- `video_part_0` → bytes 0-1MB
-- `video_part_1` → bytes 1-2MB
-- `video_part_2` → bytes 2-3MB
-- ...
-- `video_part_9` → bytes 9-10MB
-
----
-
-¡Con esta guía podrás probar completamente la funcionalidad del sistema P2P de video streaming usando Postman! 🎬🚀
