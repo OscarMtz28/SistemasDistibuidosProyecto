@@ -1,0 +1,68 @@
+El proyecto de Mini Plataforma de Video Streaming P2P con Microservicios ha cumplido exitosamente con todos los objetivos planteados:
+
+\begin{itemize}
+    \item \textbf{Arquitectura Distribuida:} Se implementó un sistema híbrido que combina un servicio central de registro con comunicación P2P directa entre nodos
+    \item \textbf{Escalabilidad:} El sistema permite agregar nodos dinámicamente usando Docker Compose con escalado horizontal
+    \item \textbf{Comunicación Eficiente:} Se estableció un sistema de notificaciones en tiempo real usando Redis Pub/Sub
+    \item \textbf{Transferencia de Fragmentos:} Los nodos pueden intercambiar fragmentos de video de manera directa y eficiente
+\end{itemize}
+
+\subsection*{Beneficios del Enfoque P2P}
+
+La implementación P2P demostró ventajas significativas sobre modelos centralizados tradicionales:
+
+\begin{itemize}
+    \item \textbf{Reducción de Carga Central:} El servidor central solo maneja registro y coordinación, no transferencia de datos
+    \item \textbf{Tolerancia a Fallos:} Los fragmentos pueden estar replicados en múltiples nodos
+    \item \textbf{Escalabilidad Natural:} Más nodos significan más capacidad total del sistema
+\end{itemize}
+
+
+\subsubsection*{Microservicios con Spring Boot}
+La arquitectura de microservicios permitió:
+\begin{itemize}
+    \item Desarrollo independiente de componentes
+    \item Mantenimiento simplificado
+\end{itemize}
+
+\subsubsection*{Containerización con Docker}
+El uso de Docker facilitó:
+\begin{itemize}
+    \item Despliegue consistente en diferentes entornos
+    \item Escalado automático de nodos
+    \item Aislamiento de dependencias
+    \item Configuración simplificada
+\end{itemize}
+
+\subsubsection*{Sistema Pub/Sub}
+Redis Pub/Sub proporcionó:
+\begin{itemize}
+    \item Notificaciones en tiempo real
+    \item Desacoplamiento entre componentes
+    \item Sincronización de estado distribuido
+\end{itemize}
+
+\subsection*{Desafíos Superados}
+
+Durante el desarrollo se enfrentaron y resolvieron varios desafíos técnicos:
+
+\begin{itemize}
+    \item \textbf{Sincronización de Estado:} Implementación de un sistema robusto de notificaciones para mantener consistencia
+    \item \textbf{Transferencia de Archivos:} Desarrollo de un mecanismo eficiente para transferir fragmentos entre nodos
+    \item \textbf{Auto-registro:} Configuración automática de nodos al iniciar usando variables de entorno
+    \item \textbf{Manejo de Errores:} Implementación de tolerancia a fallos en comunicaciones de red
+\end{itemize}
+
+
+
+Este proyecto proporcionó experiencia práctica en:
+
+\begin{itemize}
+    \item Desarrollo de sistemas distribuidos
+    \item Arquitectura de microservicios
+    \item Comunicación P2P
+    \item Containerización y orquestación
+    \item Trabajo colaborativo en equipo
+    \item Metodologías ágiles de desarrollo
+\end{itemize}
+
